@@ -1,111 +1,447 @@
-// // //
-// // //
-// // // import 'package:flutter/cupertino.dart';
-// // // import 'package:flutter/material.dart';
-// // // import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
-// // //
-// // // class QRpage extends StatefulWidget {
-// // //   QRpage({Key? key}) : super(key: key);
-// // //
-// // //   @override
-// // //   State<QRpage> createState() => _QrPageState();
-// // // }
-// // //
-// // // class _QrPageState extends State<QRpage> {
-// // //   var qrstr = "let's Scan it";
-// // //
-// // //   var height, width;
-// // //
-// // //   @override
-// // //   Widget build(BuildContext context) {
-// // //     height = MediaQuery
-// // //         .of(context)
-// // //         .size
-// // //         .height;
-// // //     width = MediaQuery
-// // //         .of(context)
-// // //         .size
-// // //         .width;
-// // //     return Scaffold(
-// // //         backgroundColor: Color.fromARGB(255, 161, 185, 210),
-// // //         appBar: AppBar(
-// // //           title: Text('QR Code'),
-// // //         ),
-// // //         body: Container(
-// // //           child: SingleChildScrollView(
-// // //             child: Padding(
-// // //               padding: const EdgeInsets.all(20.0),
-// // //               child: Center(
-// // //                 child: Column(
-// // //                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-// // //                   crossAxisAlignment: CrossAxisAlignment.center,
-// // //                   children: [
-// // //                     Positioned(
-// // //                       child: Image.asset(
-// // //                         "assets/images/"
-// // //                             "Scan_Me_SVG_Bundle_Frame_QR_Code_Svg_Cricut_Icon_Cut_Files_Border_QR_Code_Silhouette_Tag_Clipart_Pay_flrkct.webp",
-// // //                         width: 250,
-// // //                       ),
-// // //                     ),
-// // //                     SizedBox(
-// // //                       height: 50,
-// // //                     ),
-// // //                     SizedBox(
-// // //                       height: 50,
-// // //                     ),
-// // //                     ElevatedButton(
-// // //                         style: ElevatedButton.styleFrom(
-// // //                             primary: Color.fromARGB(255, 101, 148, 184),
-// // //                             minimumSize: Size(150, 50)),
-// // //                         onPressed: scanQr,
-// // //                         child: Text(('Scanner now'))),
-// // //                     SizedBox(
-// // //                       height: 60,
-// // //                     ),
-// // //                     ElevatedButton(
-// // //                       style: ElevatedButton.styleFrom(
-// // //                           primary: Color.fromARGB(255, 101, 148, 184),
-// // //                           minimumSize: Size(150, 50)),
-// // //                       onPressed: () {
-// // //                         Navigator.pushNamed(context,  "/autho");
-// // //                       },
-// // //                       child: Text("cancle"),
-// // //                     )
-// // //                   ],
-// // //                 ),
-// // //               ),
-// // //             ),
-// // //           ),
-// // //         ));
-// // //   }
-// // //
-// // //   Future<void> scanQr() async {
-// // //     try {
-// // //       FlutterBarcodeScanner.scanBarcode('#838a8f', 'cancel', true, ScanMode.QR)
-// // //           .then((value) {
-// // //         setState(() {
-// // //           qrstr = value;
-// // //         });
-// // //       });
-// // //     } catch (e) {
-// // //       setState(() {
-// // //         qrstr = 'unable to read this';
-// // //
-// // //       });
-// // //
-// // //   }
-// // //
-// // //   }
-// // // }
-// //
-// //
-// //
-
+// import 'package:flutter/cupertino.dart';
+// import 'package:flutter/material.dart';
+// import 'package:qr_code_scanner/qr_code_scanner.dart';
+// import 'core/helper/api.dart';
+// import 'core/network/end_points.dart';
+//
+//
+// class QRScanPage extends StatefulWidget {
+//   const QRScanPage({Key? key}) : super(key: key);
+//
+//   @override
+//   State<QRScanPage> createState() => _QRScanPageState();
+// }
+//
+// class _QRScanPageState extends State<QRScanPage> {
+//   final GlobalKey _gLobalkey = GlobalKey();
+//   QRViewController? controller;
+//   Barcode? result;
+//
+//   void qr(QRViewController controller) {
+//     this.controller = controller;
+//     controller.scannedDataStream.listen((event) {
+//       setState(() {
+//         result = event;
+//         // Close the camera after scanning
+//         controller.dispose();
+//         // Send the result to the backend with the token
+//         _sendQRCodeToBackend(result?.code ?? "No QR Code found", userToken!);
+//       });
+//     });
+//   }
+//
+//   void _sendQRCodeToBackend(String qrCode, String token) async {
+//     try {
+//       final response = await DioHelper().postData(
+//         url: 'http://yasmeen84983.runasp.net/api/Attendance/MarkAttendance', // The endpoint for attendance
+//         data: {'qr_code': qrCode},
+//         token: token, // Pass the token here
+//       );
+//       Navigator.push(
+//         context,
+//         MaterialPageRoute(
+//           builder: (context) => ResultPage(response.data['message']),
+//         ),
+//       );
+//     } catch (e) {
+//       // Handle errors if necessary
+//       Navigator.push(
+//         context,
+//         MaterialPageRoute(
+//           builder: (context) => ResultPage("Error: ${e.toString()}"),
+//         ),
+//       );
+//     }
+//   }
+//
+//   @override
+//   Widget build(BuildContext context) {
+//     return Scaffold(
+//       appBar: AppBar(
+//         title: Text("QR"),
+//       ),
+//       body: Center(
+//         child: Column(
+//           mainAxisAlignment: MainAxisAlignment.center,
+//           children: <Widget>[
+//             Container(
+//               height: 400,
+//               width: 400,
+//               child: QRView(
+//                 key: _gLobalkey,
+//                 onQRViewCreated: qr,
+//               ),
+//             ),
+//             Center(
+//               child: (result != null) ? Text('${result!.code}') : Text('Scan a code'),
+//             ),
+//           ],
+//         ),
+//       ),
+//     );
+//   }
+// }
+//
+// class ResultPage extends StatelessWidget {
+//   final String resultMessage;
+//
+//   const ResultPage(this.resultMessage);
+//
+//   @override
+//   Widget build(BuildContext context) {
+//     return Scaffold(
+//         appBar: AppBar(
+//           title: Text("QR Result"),
+//         ),
+//         body: Center(
+//             child: Text('QR Code Result: $resultMessage'),
+//             ),
+//         );
+//    }
+// }
+//
+// import 'package:flutter/cupertino.dart';
+// import 'package:flutter/material.dart';
+// import 'package:qr_code_scanner/qr_code_scanner.dart';
+// import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+// import 'core/helper/api.dart';
+// import 'core/network/end_points.dart';
+//
+// class QRScanPage extends StatefulWidget {
+//   const QRScanPage({Key? key}) : super(key: key);
+//
+//   @override
+//   State<QRScanPage> createState() => _QRScanPageState();
+// }
+//
+// class _QRScanPageState extends State<QRScanPage> {
+//   final GlobalKey _gLobalkey = GlobalKey();
+//   QRViewController? controller;
+//   Barcode? result;
+//   String? userToken;
+//
+//   // Create a FlutterSecureStorage instance
+//   final FlutterSecureStorage secureStorage = FlutterSecureStorage();
+//
+//   @override
+//   void initState() {
+//     super.initState();
+//     _loadToken();
+//   }
+//
+//   Future<void> _loadToken() async {
+//     userToken = await secureStorage.read(key: 'userToken');
+//     if (userToken == null) {
+//       // Handle the case where the token is not available
+//       print('User token is not available.');
+//     }
+//   }
+//
+//   void qr(QRViewController controller) {
+//     this.controller = controller;
+//     controller.scannedDataStream.listen((event) {
+//       setState(() {
+//         result = event;
+//         // Close the camera after scanning
+//         controller.dispose();
+//         // Send the result to the backend with the token
+//         if (userToken != null) {
+//           _sendQRCodeToBackend(result?.code ?? "No QR Code found", userToken!);
+//         } else {
+//           print('User token is not available.');
+//         }
+//       });
+//     });
+//   }
+//
+//   void _sendQRCodeToBackend(String qrCode, String token) async {
+//     try {
+//       DioHelper.setToken(token); // Ensure token is set in DioHelper
+//       final response = await DioHelper().postData(
+//         url: 'http://yasmeen84983.runasp.net/api/Attendance/MarkAttendance', // The endpoint for attendance
+//         data: {'qr_code': qrCode},
+//       );
+//       Navigator.push(
+//         context,
+//         MaterialPageRoute(
+//           builder: (context) => ResultPage(response.data['message']),
+//         ),
+//       );
+//     } catch (e) {
+//       // Handle errors if necessary
+//       Navigator.push(
+//         context,
+//         MaterialPageRoute(
+//           builder: (context) => ResultPage("Error: ${e.toString()}"),
+//         ),
+//       );
+//     }
+//   }
+//
+//   @override
+//   Widget build(BuildContext context) {
+//     return Scaffold(
+//       appBar: AppBar(
+//         title: Text("QR"),
+//       ),
+//       body: Center(
+//         child: Column(
+//           mainAxisAlignment: MainAxisAlignment.center,
+//           children: <Widget>[
+//             Container(
+//               height: 400,
+//               width: 400,
+//               child: QRView(
+//                 key: _gLobalkey,
+//                 onQRViewCreated: qr,
+//               ),
+//             ),
+//             Center(
+//               child: (result != null) ? Text('${result!.code}') : Text('Scan a code'),
+//             ),
+//           ],
+//         ),
+//       ),
+//     );
+//   }
+// }
+//
+// class ResultPage extends StatelessWidget {
+//   final String resultMessage;
+//
+//   const ResultPage(this.resultMessage);
+//
+//   @override
+//   Widget build(BuildContext context) {
+//     return Scaffold(
+//       appBar: AppBar(
+//         title: Text("QR Result"),
+//       ),
+//       body: Center(
+//         child: Text('QR Code Result: $resultMessage'),
+//       ),
+//     );
+//   }
+// }
+// import 'package:flutter/cupertino.dart';
+// import 'package:flutter/material.dart';
+// import 'package:qr_code_scanner/qr_code_scanner.dart';
+//
+//
+//
+// class QRScanPage extends StatefulWidget {
+//   const QRScanPage({Key? key}) : super(key: key);
+//
+//   @override
+//   State<QRScanPage> createState() => _QRScanPageState();
+// }
+//
+// class _QRScanPageState extends State<QRScanPage> {
+//   final GlobalKey _gLobalkey = GlobalKey();
+//   QRViewController? controller;
+//   Barcode? result;
+//
+//   void qr(QRViewController controller) {
+//     this.controller = controller;
+//     controller.scannedDataStream.listen((event) {
+//       setState(() {
+//         result = event;
+//         // Close the camera after scanning
+//         controller.dispose();
+//
+//         // Navigate to another page with the result
+//         Navigator.push(
+//           context,
+//           MaterialPageRoute(
+//             builder: (context) => ResultPage(result?.code ?? "No QR Code found"),
+//           ),
+//         );
+//       });
+//     });
+//   }
+//
+//   @override
+//   Widget build(BuildContext context) {
+//     return Scaffold(
+//       appBar: AppBar(
+//         title: Text("QR"),
+//       ),
+//       body: Center(
+//         child: Column(
+//           mainAxisAlignment: MainAxisAlignment.center,
+//           children: <Widget>[
+//             Container(
+//               height: 400,
+//               width: 400,
+//               child: QRView(
+//                 key: _gLobalkey,
+//                 onQRViewCreated: qr,
+//               ),
+//             ),
+//             Center(
+//               child: (result != null) ? Text('${result!.code}') : Text('Scan a code'),
+//             ),
+//           ],
+//         ),
+//       ),
+//     );
+//   }
+// }
+//
+// class ResultPage extends StatelessWidget {
+//   final String qrCodeResult;
+//
+//   const ResultPage(this.qrCodeResult);
+//
+//   @override
+//   Widget build(BuildContext context) {
+//     return Scaffold(
+//       appBar: AppBar(
+//         title: Text("QR Result"),
+//       ),
+//       body: Center(
+//         child: Text('QR Code Result: $qrCodeResult'),
+//       ),
+//     );
+//   }
+// }
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+// import 'package:flutter/cupertino.dart';
+// import 'package:flutter/material.dart';
+// import 'package:flutter_bloc/flutter_bloc.dart';
+// import 'package:logaya/qrScan/QR_cubit.dart';
+// import 'package:logaya/qrScan/QR_state.dart';
+// import 'package:qr_code_scanner/qr_code_scanner.dart';
+//
+// import 'core/helper/cach.dart';
+// import 'core/widget/custom_show_toast.dart';
+//
+//
+//
+// class QRScanPage extends StatefulWidget {
+//   const QRScanPage({Key? key}) : super(key: key);
+//
+//   @override
+//   State<QRScanPage> createState() => _QRScanPageState();
+// }
+//
+// class _QRScanPageState extends State<QRScanPage> {
+//   final GlobalKey _gLobalkey = GlobalKey();
+//   QRViewController? controller;
+//   Barcode? result;
+//
+//   void qr(QRViewController controller) {
+//     this.controller = controller;
+//     controller.scannedDataStream.listen((event) {
+//       setState(() {
+//         result = event;
+//         // Close the camera after scanning
+//         controller.dispose();
+//
+//         // Navigate to another page with the result
+//         Navigator.push(
+//           context,
+//           MaterialPageRoute(
+//             builder: (context) => ResultPage(result?.code ?? "No QR Code found"),
+//           ),
+//         );
+//       });
+//     });
+//   }
+//
+//   @override
+//   Widget build(BuildContext context) {
+//     return BlocProvider(
+//         create: (context) => ScanCubit(),
+//         child: BlocConsumer<ScanCubit, QRState>(
+//         listener: (context, state) {
+//       if (state is QRSuccess) {
+//         if (state.QRModel.isAuthenticated == true) {
+//           ChachHelper.saveData(
+//               key: 'token', value: state.registerModel.token)
+//               .then((value) {
+//             userToken = '${state.registerModel.token}';
+//             Navigator.pushAndRemoveUntil(
+//               context,
+//               MaterialPageRoute(
+//                 builder: (context) => Container(),
+//               ),
+//                   (route) => false,
+//             );
+//           });
+//           // print('The Token is ${state.QRModel.token}');
+//           showToast(msg: 'Success', state: ToastStates.SUCCESS);
+//         } else {
+//           showToast(msg: 'Failed', state: ToastStates.ERROR);
+//         }
+//       }
+//     },
+//     builder: (context, state) {
+//           return   Scaffold(
+//       appBar: AppBar(
+//         title: Text("QR"),
+//       ),
+//       body: Center(
+//         child: Column(
+//           mainAxisAlignment: MainAxisAlignment.center,
+//           children: <Widget>[
+//             Container(
+//               height: 400,
+//               width: 400,
+//               child: QRView(
+//                 key: _gLobalkey,
+//                 onQRViewCreated: qr,
+//               ),
+//             ),
+//             Center(
+//               child: (result != null) ? Text('${result!.code}') : Text('Scan a code'),
+//             ),
+//           ],
+//         ),
+//       ),
+//     );
+//   }
+// }
+// }
+//
+// class ResultPage extends StatelessWidget {
+//   final String qrCodeResult;
+//
+//   const ResultPage(this.qrCodeResult);
+//
+//   @override
+//   Widget build(BuildContext context) {
+//     return Scaffold(
+//       appBar: AppBar(
+//         title: Text("QR Result"),
+//       ),
+//       body: Center(
+//         child: Text('QR Code Result: $qrCodeResult'),
+//       ),
+//     );
+//   }
+// }
+// qr_scan_page.dart
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:logaya/qrScan/QR_cubit.dart';
+import 'package:logaya/qrScan/QR_state.dart';
+import 'package:logaya/scan.dart';
 import 'package:qr_code_scanner/qr_code_scanner.dart';
-
-
+import 'core/widget/custom_show_toast.dart';
 
 class QRScanPage extends StatefulWidget {
   const QRScanPage({Key? key}) : super(key: key);
@@ -114,75 +450,94 @@ class QRScanPage extends StatefulWidget {
   State<QRScanPage> createState() => _QRScanPageState();
 }
 
-class _QRScanPageState extends State<QRScanPage> {
-  final GlobalKey _gLobalkey = GlobalKey();
+class _QRScanPageState extends State<QRScanPage> with WidgetsBindingObserver {
+  final GlobalKey _globalKey = GlobalKey();
   QRViewController? controller;
   Barcode? result;
 
-  void qr(QRViewController controller) {
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addObserver(this);
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    controller?.dispose();
+    super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (controller != null) {
+      if (state == AppLifecycleState.paused) {
+        controller?.pauseCamera();
+      } else if (state == AppLifecycleState.resumed) {
+        controller?.resumeCamera();
+      }
+    }
+  }
+
+  void onQRViewCreated(QRViewController controller) {
     this.controller = controller;
     controller.scannedDataStream.listen((event) {
       setState(() {
         result = event;
-        // Close the camera after scanning
-        controller.dispose();
-
-        // Navigate to another page with the result
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => ResultPage(result?.code ?? "No QR Code found"),
-          ),
-        );
+        if (result != null) {
+          String lectureId = result!.code!;
+          BlocProvider.of<ScanCubit>(context).QRSCAN(lectureId: lectureId);
+        }
       });
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text("QR"),
-      ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            Container(
-              height: 400,
-              width: 400,
-              child: QRView(
-                key: _gLobalkey,
-                onQRViewCreated: qr,
+    return BlocProvider(
+      create: (context) => ScanCubit(),
+      child: BlocConsumer<ScanCubit, QRState>(
+        listener: (context, state) {
+          if (state is QRSuccess) {
+            showToast(msg: 'QR Code processed successfully', state: ToastStates.SUCCESS);
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => ResultPage(state.QRModel.lectureId.toString()),
+              ),
+            );
+          } else if (state is QRFailure) {
+            showToast(msg: state.errMessage, state: ToastStates.ERROR);
+          }
+        },
+        builder: (context, state) {
+          return Scaffold(
+            appBar: AppBar(
+              title: Text("QR Scanner"),
+            ),
+            body: Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  Container(
+                    height: 400,
+                    width: 400,
+                    child: QRView(
+                      key: _globalKey,
+                      onQRViewCreated: onQRViewCreated,
+                    ),
+                  ),
+                  Center(
+                    child: (result != null) ? Text('${result!.code}') : Text('Scan a code'),
+                  ),
+                  if (state is QRLoaded)
+                    CircularProgressIndicator(),
+                ],
               ),
             ),
-            Center(
-              child: (result != null) ? Text('${result!.code}') : Text('Scan a code'),
-            ),
-          ],
-        ),
+          );
+        },
       ),
     );
   }
 }
-
-class ResultPage extends StatelessWidget {
-  final String qrCodeResult;
-
-  const ResultPage(this.qrCodeResult);
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text("QR Result"),
-      ),
-      body: Center(
-        child: Text('QR Code Result: $qrCodeResult'),
-      ),
-    );
-  }
-}
-
-
-

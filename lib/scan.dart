@@ -123,8 +123,53 @@
 //
 //
 
-import 'package:flutter/cupertino.dart';
+// import 'package:flutter/cupertino.dart';
+// import 'package:flutter/material.dart';
+// class ResultPage extends StatelessWidget {
+//   final String qrCodeResult;
+//
+//   const ResultPage(this.qrCodeResult);
+//
+//   @override
+//   Widget build(BuildContext context) {
+//     return Scaffold(
+//       appBar: AppBar(
+//         title: Text("QR Result"),
+//       ),
+//       body: Center(
+//         child: Text('QR Code Result: $qrCodeResult'),
+//       ),
+//     );
+//   }
+// }
+// import 'package:flutter/cupertino.dart';
+// import 'package:flutter/material.dart';
+// class ResultPage extends StatelessWidget {
+//   final String qrCodeResult;
+//
+//   const ResultPage(this.qrCodeResult);
+//
+//   @override
+//   Widget build(BuildContext context) {
+//     return Scaffold(
+//       appBar: AppBar(
+//         title: Text("QR Result"),
+//       ),
+//       body: Center(
+//         child: Text('QR Code Result: $qrCodeResult'),
+//       ),
+//     );
+//   }
+// }
+
+
+
+
+
+
 import 'package:flutter/material.dart';
+
+
 class ResultPage extends StatelessWidget {
   final String qrCodeResult;
 
@@ -142,4 +187,3 @@ class ResultPage extends StatelessWidget {
     );
   }
 }
-

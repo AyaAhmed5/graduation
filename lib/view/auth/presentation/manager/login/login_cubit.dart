@@ -22,6 +22,7 @@ class LoginCubit extends Cubit<LoginState> {
         'email': email,
         'password': password,
       },
+      token: 'Bearer $userToken'
     ).then((value) {
       print(value.data);
       loginModel = Auth.fromJson(value.data);

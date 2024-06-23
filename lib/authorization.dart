@@ -3,7 +3,9 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:logaya/view/auth/presentation/view/login.dart';
 
+import 'core/helper/cach.dart';
 import 'face.dart';
 import 'finger.dart';
 
@@ -14,6 +16,31 @@ class autho extends StatelessWidget {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
+        backgroundColor: Color(0xFFE5E5E5),
+    appBar: AppBar(
+    actions: [
+    // IconButton(onPressed: (){
+    // Navigator.pushNamed(context, "/table");
+    // }, icon: Icon(Icons.backup_table),color: Colors.black,
+    // ),
+    IconButton(onPressed: (){
+      ChachHelper.removeData(key: 'token')!.then((value) => {
+        if (value == true)
+          {
+            Navigator.pushAndRemoveUntil(
+              context,
+              MaterialPageRoute(
+                builder: (context) => const LoginScreen(),
+              ),
+                  (route) => false,
+            )
+          }
+      });
+    }, icon: Icon(Icons.logout),color: Colors.black,
+    ),
+
+    ],
+    ),
           body: Container(
         height: double.infinity,
         width: double.infinity,

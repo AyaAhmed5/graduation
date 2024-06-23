@@ -6,7 +6,7 @@ class DioHelper {
   static void init() {
     dio = Dio(
       BaseOptions(
-        baseUrl: 'http://yasmeen84983.runasp.net/api/',
+        baseUrl: 'http://yasmeenkhaled4543.runasp.net/api/',
         receiveDataWhenStatusError: true,
       ),
     );
@@ -84,5 +84,8 @@ class DioHelper {
       print('Error: ${e.response?.statusCode} - ${e.message}');
       throw e; // إعادة رمي الاستثناء ليمكن التعامل معه في مكان آخر إذا لزم الأمر
     }
+
+
   }
+
 }

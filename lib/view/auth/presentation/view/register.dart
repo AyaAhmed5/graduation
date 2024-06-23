@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:iconsax_flutter/iconsax_flutter.dart';
 import 'package:logaya/view/auth/presentation/view/widgets/text_field.dart';
 
+import '../../../../authorization.dart';
 import '../../../../core/helper/cach.dart';
 import '../../../../core/network/end_points.dart';
 import '../../../../core/widget/colors.dart';
@@ -37,7 +38,7 @@ class RegisterScreen extends StatelessWidget {
                 Navigator.pushAndRemoveUntil(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => Container(),
+                    builder: (context) => autho(),
                   ),
                   (route) => false,
                 );
