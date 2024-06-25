@@ -5,5 +5,5 @@ const secondColor =  Color(0xff819f7f);
 const thirdColor =  Color(0xfffdfbda);
 const fourthColor =  Color(0xffd3d0a8);
 
-Color kPrimaryColor = const Color(0xff0DF5E3);
+Color kPrimaryColor = const Color(0xff22a9a9);
 Color kGreyColor = const Color(0xff8D8D8D);

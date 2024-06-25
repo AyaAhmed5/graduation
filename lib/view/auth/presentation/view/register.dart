@@ -111,7 +111,8 @@ class RegisterScreen extends StatelessWidget {
                         obscure: RegisterCubit.get(context).isObsecure,
                         controller: passWordController,
                         lable: "Password",
-                        icon: Iconsax.password_check,
+
+                        icon: Iconsax.lock,
                         isPass: true,
                         onSubmitted: (value) {
                           passWordController.text = value;
@@ -121,13 +122,21 @@ class RegisterScreen extends StatelessWidget {
                           RegisterCubit.get(context).changePasswordVisibility();
                         },
                       ),
+                      Text(
+                        'Hint: Use at least 8 characters, including uppercase letters, lowercase letters, numbers, and symbols.',
+                        style: TextStyle(
+                          color: Colors.grey,
+                          fontSize: 12,
+                        ),
+                      ),
                       CustomField(
                         controller: confirmPasswordController,
+
                         onSubmitted: (value) {
                           passWordController.text = value;
                         },
                         lable: "Confirm Password",
-                        icon: Icons.phone,
+                        icon: Icons.lock,
                         showBorder: false,
                       ),
                       const SizedBox(

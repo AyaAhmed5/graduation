@@ -171,19 +171,41 @@ import 'package:flutter/material.dart';
 
 
 class ResultPage extends StatelessWidget {
-  final String qrCodeResult;
+  final String lectureId;
 
-  const ResultPage(this.qrCodeResult);
+  ResultPage(this.lectureId);
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("QR Result"),
+        title: Text('Success'),
       ),
       body: Center(
-        child: Text('QR Code Result: $qrCodeResult'),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            Icon(
+              Icons.check_circle,
+              color: Colors.green,
+              size: 100.0,
+            ),
+            SizedBox(height: 20),
+            Text(
+              'QR Code processed successfully',
+              style: TextStyle(fontSize: 24),
+            ),
+            SizedBox(height: 20),
+            Text(
+              'Lecture ID: $lectureId',
+              style: TextStyle(fontSize: 18),
+            ),
+          ],
+        ),
       ),
     );
   }
 }
+
+
+

@@ -52,9 +52,11 @@ class LoginScreen extends StatelessWidget {
         },
         builder: (context, state) {
           return Scaffold(
+       //    backgroundColor: Color(0xff005f6a),
             appBar: AppBar(),
             body: Padding(
               padding: const EdgeInsets.all(20.0),
+
               child: SingleChildScrollView(
                 child: Form(
                   key: formKey,
@@ -87,7 +89,7 @@ class LoginScreen extends StatelessWidget {
                         obscure: LoginCubit.get(context).isObsecure,
                         controller: passWordController,
                         lable: "Password",
-                        icon: Iconsax.password_check,
+                        icon: Iconsax.lock,
                         isPass: true,
                         suffixIcon: LoginCubit.get(context).suffix,
                         suffixPressed: () {
@@ -97,16 +99,24 @@ class LoginScreen extends StatelessWidget {
                       const SizedBox(
                         height: 16,
                       ),
-                      Row(
-                        children: [
-                          const Spacer(),
-                          GestureDetector(
-                            child: const Text("Forget Password?"),
-                            onTap: () {
-                            },
-                          )
-                        ],
-                      ),
+                      // Row(
+                      //   children: [
+                      //     const Spacer(),
+                      //     GestureDetector(
+                      //       child: const Text("Forget Password?"),
+                      //       onTap: () {
+                      //       },
+                      //     )
+                      //   ],
+                      // ),
+
+                      // Text(
+                      //   'Hint: Use at least 8 characters, including uppercase letters, lowercase letters, numbers, and symbols.',
+                      //   style: TextStyle(
+                      //     color: Colors.grey,
+                      //     fontSize: 12,
+                      //   ),
+                      // ),
                       const SizedBox(
                         height: 30.0,
                       ),
@@ -152,7 +162,7 @@ class LoginScreen extends StatelessWidget {
                             style: TextStyle(
                               color: Theme.of(context)
                                   .colorScheme
-                                  .onBackground, 
+                                  .onBackground,
                             ),
                           ),
                         ),

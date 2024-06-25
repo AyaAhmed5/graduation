@@ -437,11 +437,214 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:logaya/core/network/end_points.dart';
 import 'package:logaya/qrScan/QR_cubit.dart';
 import 'package:logaya/qrScan/QR_state.dart';
 import 'package:logaya/scan.dart';
 import 'package:qr_code_scanner/qr_code_scanner.dart';
+import 'ViewAttend/table.dart';
 import 'core/widget/custom_show_toast.dart';
+
+// class QRScanPage extends StatefulWidget {
+//   const QRScanPage({Key? key}) : super(key: key);
+//
+//   @override
+//   State<QRScanPage> createState() => _QRScanPageState();
+// }
+//
+// class _QRScanPageState extends State<QRScanPage> with WidgetsBindingObserver {
+//   final GlobalKey _globalKey = GlobalKey();
+//   QRViewController? controller;
+//   Barcode? result;
+//
+//   @override
+//   void initState() {
+//     super.initState();
+//     WidgetsBinding.instance.addObserver(this);
+//   }
+//
+//   @override
+//   void dispose() {
+//     WidgetsBinding.instance.removeObserver(this);
+//     controller?.dispose();
+//     super.dispose();
+//   }
+//
+//   @override
+//   void didChangeAppLifecycleState(AppLifecycleState state) {
+//     if (controller != null) {
+//       if (state == AppLifecycleState.paused) {
+//         controller?.pauseCamera();
+//       } else if (state == AppLifecycleState.resumed) {
+//         controller?.resumeCamera();
+//       }
+//     }
+//   }
+//
+//   void onQRViewCreated(QRViewController controller) {
+//     this.controller = controller;
+//     controller.scannedDataStream.listen((event) {
+//       setState(() {
+//         result = event;
+//         if (result != null) {
+//           String lectureId = result!.code!;
+//           BlocProvider.of<ScanCubit>(context).QRSCAN(lectureId: lectureId);
+//         }
+//       });
+//     });
+//   }
+//
+//   @override
+//   Widget build(BuildContext context) {
+//     return BlocProvider(
+//       create: (context) => ScanCubit(),
+//       child: BlocConsumer<ScanCubit, QRState>(
+//         listener: (context, state) {
+//           if (state is QRSuccess) {
+//             showToast(msg: 'QR Code processed successfully', state: ToastStates.SUCCESS);
+//             Navigator.push(
+//               context,
+//               MaterialPageRoute(
+//                 builder: (context) => ResultPage(state.QRModel.lectureId.toString()),
+//               ),
+//             );
+//           } else if (state is QRFailure) {
+//             showToast(msg: state.errMessage, state: ToastStates.ERROR);
+//           }
+//         },
+//         builder: (context, state) {
+//           return Scaffold(
+//             appBar: AppBar(
+//               title: Text("QR Scanner"),
+//             ),
+//             body: Center(
+//               child: Column(
+//                 mainAxisAlignment: MainAxisAlignment.center,
+//                 children: <Widget>[
+//                   Container(
+//                     height: 400,
+//                     width: 400,
+//                     child: QRView(
+//                       key: _globalKey,
+//                       onQRViewCreated: onQRViewCreated,
+//                     ),
+//                   ),
+//                   Center(
+//                     child: (result != null) ? Text('${result!.code}') : Text('Scan a code'),
+//                   ),
+//                   if (state is QRLoaded)
+//                     CircularProgressIndicator(),
+//                 ],
+//               ),
+//             ),
+//           );
+//         },
+//       ),
+//     );
+//   }
+// }
+
+//
+// class QRScanPage extends StatefulWidget {
+//   const QRScanPage({Key? key}) : super(key: key);
+//
+//   @override
+//   State<QRScanPage> createState() => _QRScanPageState();
+// }
+//
+// class _QRScanPageState extends State<QRScanPage> with WidgetsBindingObserver {
+//   final GlobalKey _globalKey = GlobalKey();
+//   QRViewController? controller;
+//   Barcode? result;
+//
+//   @override
+//   void initState() {
+//     super.initState();
+//     WidgetsBinding.instance.addObserver(this);
+//   }
+//
+//   @override
+//   void dispose() {
+//     WidgetsBinding.instance.removeObserver(this);
+//     controller?.dispose();
+//     super.dispose();
+//   }
+//
+//   @override
+//   void didChangeAppLifecycleState(AppLifecycleState state) {
+//     if (controller != null) {
+//       if (state == AppLifecycleState.paused) {
+//         controller?.pauseCamera();
+//       } else if (state == AppLifecycleState.resumed) {
+//         controller?.resumeCamera();
+//       }
+//     }
+//   }
+//
+//   void onQRViewCreated(QRViewController controller) {
+//     this.controller = controller;
+//     controller.scannedDataStream.listen((event) {
+//       setState(() {
+//         result = event;
+//         if (result != null) {
+//           String lectureId = result!.code!;
+//           controller.pauseCamera(); // Pause the camera
+//           BlocProvider.of<ScanCubit>(context).QRSCAN(lectureId: lectureId);
+//         }
+//       });
+//     });
+//   }
+//
+//   @override
+//   Widget build(BuildContext context) {
+//     return BlocProvider(
+//       create: (context) => ScanCubit(),
+//       child: BlocConsumer<ScanCubit, QRState>(
+//         listener: (context, state) async {
+//           if (state is QRSuccess) {
+//             await controller?.stopCamera(); // Ensure the camera is stopped
+//             showToast(msg: 'QR Code processed successfully', state: ToastStates.SUCCESS);
+//             Navigator.pushReplacement(
+//               context,
+//               MaterialPageRoute(
+//                 builder: (context) => ResultPage(state.QRModel.lectureId.toString()),
+//               ),
+//             );
+//           } else if (state is QRFailure) {
+//             showToast(msg: state.errMessage, state: ToastStates.ERROR);
+//           }
+//         },
+//         builder: (context, state) {
+//           return Scaffold(
+//             appBar: AppBar(
+//               title: Text("QR Scanner"),
+//             ),
+//             body: Center(
+//               child: Column(
+//                 mainAxisAlignment: MainAxisAlignment.center,
+//                 children: <Widget>[
+//                   Container(
+//                     height: 400,
+//                     width: 400,
+//                     child: QRView(
+//                       key: _globalKey,
+//                       onQRViewCreated: onQRViewCreated,
+//                     ),
+//                   ),
+//                   Center(
+//                     child: (result != null) ? Text('${result!.code}') : Text('Scan a code'),
+//                   ),
+//                   if (state is QRLoaded)
+//                     CircularProgressIndicator(),
+//                 ],
+//               ),
+//             ),
+//           );
+//         },
+//       ),
+//     );
+//   }
+// }
 
 class QRScanPage extends StatefulWidget {
   const QRScanPage({Key? key}) : super(key: key);
@@ -479,6 +682,20 @@ class _QRScanPageState extends State<QRScanPage> with WidgetsBindingObserver {
     }
   }
 
+  // void onQRViewCreated(QRViewController controller) {
+  //   this.controller = controller;
+  //   controller.scannedDataStream.listen((event) {
+  //     setState(() {
+  //       result = event;
+  //       if (result != null) {
+  //         String lectureId = result!.code!;
+  //         controller.pauseCamera(); // Pause the camera
+  //         BlocProvider.of<ScanCubit>(context).QRSCAN(lectureId: lectureId);
+  //       }
+  //     });
+  //   });
+  // }
+
   void onQRViewCreated(QRViewController controller) {
     this.controller = controller;
     controller.scannedDataStream.listen((event) {
@@ -486,24 +703,37 @@ class _QRScanPageState extends State<QRScanPage> with WidgetsBindingObserver {
         result = event;
         if (result != null) {
           String lectureId = result!.code!;
+          controller.pauseCamera(); // Pause the camera
           BlocProvider.of<ScanCubit>(context).QRSCAN(lectureId: lectureId);
+
+          // Navigate to the view page
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+              builder: (context) =>StudentAttendanceScreen(token: '$userToken',),
+            ),
+          );
         }
       });
     });
   }
+
+
 
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (context) => ScanCubit(),
       child: BlocConsumer<ScanCubit, QRState>(
-        listener: (context, state) {
+        listener: (context, state) async {
           if (state is QRSuccess) {
+       await controller?.stopCamera(); // Ensure the camera is stopped
             showToast(msg: 'QR Code processed successfully', state: ToastStates.SUCCESS);
-            Navigator.push(
+            print('Navigating to StudentAttendanceScreen with token: ${state.QRModel.lectureId.toString()}');
+            Navigator.pushReplacement(
               context,
               MaterialPageRoute(
-                builder: (context) => ResultPage(state.QRModel.lectureId.toString()),
+                builder: (context) => StudentAttendanceScreen(token: state.QRModel.lectureId.toString()), // Pass the token here
               ),
             );
           } else if (state is QRFailure) {
