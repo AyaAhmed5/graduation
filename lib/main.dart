@@ -33,7 +33,6 @@ class MyApp extends StatelessWidget {
 
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
-      
         home:  LoginScreen(),
         theme: ThemeData(
           // This is the theme of your application.
@@ -54,7 +53,7 @@ class MyApp extends StatelessWidget {
             colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
             useMaterial3: true,
             appBarTheme: AppBarTheme(
-                color: const Color.fromARGB(255, 39, 112, 176)
+                color: Color.fromARGB(255, 7, 61, 105)
             )
         ),
       

@@ -25,6 +25,7 @@ class CustomField extends StatefulWidget {
   String? suffixtext;
   String? prefixtext;
   bool? centerTitle;
+  Function? validator;
   final List<String>? dropdownItems;
   final void Function(String?)? onDropdownChanged;
   final Color? textColor;
@@ -55,6 +56,7 @@ class CustomField extends StatefulWidget {
     this.width,
     this.height,
     this.backgroundColor,
+     this.validator
   });
 
   @override
